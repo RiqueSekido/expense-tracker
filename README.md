@@ -2,7 +2,7 @@
 
 Primeira versão de um sistema pessoal com React, TypeScript, Material UI, FastAPI, SQLAlchemy, Alembic e PostgreSQL.
 
-Permite cadastrar e excluir gastos, consultar um mês e acompanhar seu total. A interface mostra carregamento, erros e meses sem lançamentos. A moeda é BRL.
+Permite cadastrar e excluir gastos, consultar um mês e acompanhar seu total. A aba de categorias permite criar e renomear categorias; categorias com gastos associados não podem ser excluídas. A interface mostra carregamento, erros e meses sem lançamentos. A moeda é BRL.
 
 ## Executar localmente
 
@@ -14,7 +14,19 @@ Na raiz, execute:
 docker compose up --build -d
 ```
 
-Isso inicia PostgreSQL e API, aplicando a migração inicial. Os dados ficam no volume `postgres_data`. As credenciais do Compose são exclusivamente para desenvolvimento local. O banco do projeto usa a porta 5433 no computador para evitar conflito com o PostgreSQL já instalado na porta 5432.
+Isso inicia PostgreSQL e API, aplicando migrações pendentes. O código em `backend/app` fica monitorado pelo Uvicorn: ao salvar uma alteração Python, a API reinicia automaticamente. Os dados ficam no volume `postgres_data`. As credenciais do Compose são exclusivamente para desenvolvimento local. O banco do projeto usa a porta 5433 no computador para evitar conflito com o PostgreSQL já instalado na porta 5432.
+
+Após alterar `compose.yaml`, `Dockerfile` ou dependências, recrie a API:
+
+```powershell
+docker compose up --build -d api
+```
+
+Para aplicar uma nova migração enquanto os serviços estão em execução:
+
+```powershell
+docker compose exec api alembic upgrade head
+```
 
 Em outro terminal:
 
@@ -80,6 +92,6 @@ As rotas usam `def` com acesso síncrono ao banco. O efeito React carrega os dad
 
 ## Próximas etapas
 
-Esta versão é local e não possui autenticação. Antes de disponibilizar online, implementar login, autorização por usuário e configuração segura de implantação. Edição de gastos, categorias personalizadas, paginação e relatórios por categoria ficam para as próximas versões.
+Esta versão é local e não possui autenticação. Antes de disponibilizar online, implementar login, autorização por usuário e configuração segura de implantação. Edição de gastos, paginação e relatórios por categoria ficam para as próximas versões.
 
 O escopo inicial está em `docs/primeira-versao.md`. O arquivo original `READ.ME` foi preservado.
