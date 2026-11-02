@@ -2,7 +2,7 @@
 
 Primeira versão de um sistema pessoal com React, TypeScript, Material UI, FastAPI, SQLAlchemy, Alembic e PostgreSQL.
 
-Permite cadastrar e excluir gastos, consultar um mês e acompanhar seu total. A aba de categorias permite criar e renomear categorias; categorias com gastos associados não podem ser excluídas. A interface mostra carregamento, erros e meses sem lançamentos. A moeda é BRL.
+Permite cadastrar, editar e excluir lançamentos, consultar um mês e acompanhar seu total. Use **Editar** nas tabelas para alterar descrição, valor, data e categoria; o tipo de entrada ou saída e a identificação original do CSV são preservados. A aba de categorias permite criar e renomear categorias; categorias com gastos associados não podem ser excluídas. A interface mostra carregamento, erros e meses sem lançamentos. A moeda é BRL.
 
 ## Executar localmente
 
@@ -43,6 +43,33 @@ Para parar os serviços sem apagar os dados:
 ```powershell
 docker compose down
 ```
+
+## Lançamentos e categoria Devendo
+
+Use a categoria **Devendo** nos gastos pessoais pagos com a conta do BB e nas entradas que devolvem esse dinheiro. Não é necessário vincular uma devolução a um gasto específico.
+
+Dentro de Devendo, escolha o tipo **Gasto pessoal** ou **Salário** no cadastro, na edição, na prévia do CSV ou nas partes de um pagamento dividido. A aba Devendo separa dois grupos:
+
+- **Gastos pessoais a devolver:** reúne todos os meses; as saídas menos as devoluções formam o valor a devolver ao BB.
+- **Salário a repassar:** mostra os recebimentos e repasses para sua conta pessoal no mês escolhido. Recebimentos menos repasses formam o valor ainda a repassar naquele mês. Esse grupo também pode incluir bolsa ou outros rendimentos próprios que passam pela conta.
+
+Recebimentos e repasses do tipo Salário ficam fora dos números de saídas, devoluções e valor a devolver dos gastos pessoais. Os dois tipos continuam visíveis em Todos os Lançamentos e excluídos dos gastos da rotina. A classificação é manual e não altera a identificação original do CSV.
+
+Na tabela de gastos pessoais de Devendo, use **Ocultar** para retirar uma linha da visualização padrão. A escolha é salva e continua valendo após atualizar a página. Marque **Mostrar ocultos** para consultar essas linhas e usar **Restaurar**. A ocultação não marca dívidas como pagas, não muda os totais e não remove registros de Todos os Lançamentos.
+
+A interface apresenta três tabelas:
+
+- **Devendo:** gastos pessoais de todos os meses e salário a repassar por mês, em grupos separados.
+- **Demais lançamentos — mês selecionado:** entradas e saídas do mês sem a categoria Devendo.
+- **Todos os lançamentos — mês selecionado:** lista completa para conferência, incluindo Devendo. Os filtros de descrição, tipo e categoria afetam somente esta tabela.
+
+O resumo mensal e o gráfico da rotina usam a categoria para separar os valores de Devendo. O saldo do mês considera todas as entradas e saídas registradas no período, sem representar o saldo bancário acumulado.
+
+### Dividir um pagamento
+
+Use **Dividir** em uma saída para distribuí-la entre duas ou mais categorias. Por exemplo, um aluguel pago por R$ 1.800 pode ser dividido em R$ 1.500 de `Aluguel` e R$ 300 de `Devendo`. A soma das partes precisa ser exatamente igual ao pagamento original. Cada parte aparece nas tabelas com a referência ao mesmo pagamento; o original não é somado novamente, e sua identificação do CSV fica preservada para evitar duplicatas.
+
+Use **Editar divisão** para redistribuir os valores ou adicionar/remover partes. A edição normal de uma parte permite alterar descrição e categoria; valor e data ficam protegidos para manter a soma e a data do pagamento. Ao excluir uma parte, a confirmação informa que o pagamento dividido inteiro será excluído. Uma devolução posterior deve entrar na categoria `Devendo`, como nos demais casos.
 
 ## Backend fora do Docker
 

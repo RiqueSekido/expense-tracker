@@ -4,11 +4,30 @@ export type Expense = {
   amount: string;
   date: string;
   category: string;
+  kind: 'income' | 'expense';
+  devendo_type: 'personal' | 'salary';
+  devendo_hidden: boolean;
+  personal_expense: boolean;
+  reimbursement_for_id: number | null;
+  reimbursed_amount: string;
+  pending_amount: string;
+  split_id: number | null;
+  split_description: string | null;
+  split_total: string | null;
 };
-export type NewExpense = Omit<Expense, 'id'>;
-export type Summary = { total: string; count: number };
+export type NewExpense = Pick<Expense, 'description' | 'amount' | 'date' | 'category' | 'devendo_type'>;
+export type SplitPart = Pick<NewExpense, 'description' | 'amount' | 'category' | 'devendo_type'>;
+export type ExpenseSplit = {
+  payment: { id: number; description: string; amount: string; date: string };
+  parts: Expense[];
+};
+export type Summary = {
+  total: string; income: string; balance: string; count: number;
+  routine_total: string; reimbursements: string; pending_reimbursement: string;
+};
 export type Category = { name: string; expense_count: number };
 export type ImportCandidate = NewExpense & {
+  kind: Expense['kind'];
   row_number: number;
   card_payment: boolean;
   duplicate: boolean;
